@@ -1,6 +1,6 @@
 {
   "name": "@rtscripts/rtorrent-commands",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "rtorrent method for event.download.erased",
   "homepage": "",
   "license": "ISC",
@@ -18,7 +18,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "prepublish": "npm run test && npm run build"
+    "prepublish": "npm run test && npm run build && rm -Rf lib/__tests__"
   },
   "dependencies": {
     "@types/temp": "^0.8.34",
