@@ -4,11 +4,15 @@
 
 ## Usage
 
+### Install
+
+`npm install -g @rtscripts/rtorrent-commands`
+
 Copy & Edit the following into `~/.rtorrent.rc`
 
 ```
 method.set_key = event.download.erased, rename_on_remove, \
-    "execute = ~/path/to/rename-removed.js, \
+    "execute = rtorrent-rename-on-remove, \
         --default-directory,(directory.default), \
         --session-path,(session.path), \
         --hash,(d.hash), \
