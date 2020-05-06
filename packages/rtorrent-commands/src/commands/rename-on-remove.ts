@@ -80,8 +80,7 @@ export const renameTorrent = async (torrent: TorrentArgs) => {
         ext,
         date: new Date().toISOString(),
       };
-      // move file
-      await shell.mv(from_file, to_file);
+      fs.renameSync(from_file, to_file);
       // write nfo log
       const nfoContent = JSON.stringify({ torrent, action }, null, 2);
       const nfoFile = path.resolve(torrent.directory, filename + ".rename.nfo");

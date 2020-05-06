@@ -1,11 +1,12 @@
 {
-  "exclude": [],
-  "include": ["src/**/*.ts", "__tests__"],
+  // "exclude": [],
+  // "include": ["src/**/*.ts"],
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
     "outDir": "lib",
     "strict": true,
+    "allowJs": true,
     "types": ["jest", "node"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
