@@ -1,6 +1,6 @@
 {
-  // "exclude": [],
-  // "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"],
+  "include": ["src/**/*.ts", "__tests__"],
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
