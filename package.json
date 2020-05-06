@@ -1,0 +1,12 @@
+{
+  "name": "@rtscripts/rtscripts",
+  "version": "0.0.1",
+  "description": "rtorrent scripts",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "lerna": "^3.19.0"
+  }
+}
