@@ -18,20 +18,19 @@ describe("rename-on-remove", () => {
   let nfoFile: string;
   const folderName = "Faker - Folder Name (2020-01-01) [Studio - Category]";
   const fileName = "fake-torrent-file-name.mp4";
-  const ext = path.extname(fileName);
   logger.level = "critical";
 
-  const folderList = async (label?: string, folder?: string) =>
-    console.log(
-      `[TEST] torrent folder ${label ? "(" + label + ")" : ""}`,
-      (await shell.exec(`ls -lh '${folder || torrentFolder}'`))
-        .toString()
-        .split("\n")
-        .filter(
-          (row) => !row.trim().endsWith(".") && !row.trim().endsWith("..")
-        )
-        .join("\n")
-    );
+  // const folderList = async (label?: string, folder?: string) =>
+  //   console.log(
+  //     `[TEST] torrent folder ${label ? "(" + label + ")" : ""}`,
+  //     (await shell.exec(`ls -lh '${folder || torrentFolder}'`))
+  //       .toString()
+  //       .split("\n")
+  //       .filter(
+  //         (row) => !row.trim().endsWith(".") && !row.trim().endsWith("..")
+  //       )
+  //       .join("\n")
+  //   );
   temp.track();
   tempFolder = temp.mkdirSync("rename-on-remove");
   fs.mkdirSync(path.resolve(tempFolder, "How to"));
