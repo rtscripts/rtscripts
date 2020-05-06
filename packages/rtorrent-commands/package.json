@@ -5,6 +5,9 @@
   "homepage": "",
   "license": "ISC",
   "main": "lib/index.js",
+  "bin": {
+    "rtorrent-rename-on-remove": "lib/commands/rename-on-remove.js"
+  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -18,7 +21,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "prepublish": "npm run test && npm run build && rm -Rf lib/__tests__"
+    "prepublish": "npm run test && npm run build && rm -Rf lib/__tests__ && chmod +x lib/commands/rename-on-remove.js"
   },
   "dependencies": {
     "@types/temp": "^0.8.34",
