@@ -8,6 +8,23 @@
 
 `npm install -g @rtscripts/rtorrent-commands`
 
+#### Examples
+
+##### rtorrent-rename-on-remove
+
+```
+$ rtorrent-rename-on-remove --version
+
+Options:
+  --help       Show help                                               [boolean]
+  --version    Show version number                                     [boolean]
+  --directory  folder containing torrent                     [string] [required]
+  --basePath   path to torrent files                         [string] [required]
+  --complete   has torrent completed                                    [number]
+  --output     file to log into                                        [default:
+          "$HOME/Library/Logs/rtorrent.command.rename-on-removed.log"]
+```
+
 Copy & Edit the following into `~/.rtorrent.rc`
 
 ```

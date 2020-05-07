@@ -11,7 +11,7 @@ const yargs = require("yargs")
     type: "string",
     description: "folder containing torrent",
   })
-  .option("basePath", {
+  .option("base-path", {
     required: true,
     type: "string",
     description: "path to torrent files",
@@ -19,6 +19,7 @@ const yargs = require("yargs")
   .option("complete", {
     type: "number",
     description: "has torrent completed",
+    default: 1,
   });
 
 import logger from "../logger";
@@ -54,9 +55,7 @@ export const getTorrentFromArgs = (args: any): TorrentArgs => {
 };
 
 export const isTorrentRenamable = (torrent: TorrentArgs): boolean => {
-  const complete =
-    typeof torrent.complete !== "undefined" ? torrent.complete >= 1 : true;
-  return DIRECTORY_MATCH.test(torrent.basePath) && complete;
+  return DIRECTORY_MATCH.test(torrent.basePath) && torrent.complete >= 1;
 };
 
 export const MovieTypes = [".mp4", ".wmv", ".avi"];
