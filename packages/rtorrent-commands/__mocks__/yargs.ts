@@ -1,5 +1,18 @@
-module.exports = {
-  argv: {
+import * as path from "path";
+const homedir = require("os").homedir();
+
+const output = path.join(
+  homedir,
+  "Library/Logs",
+  "rtorrent.command.rename-on-removed.log"
+);
+
+class Yargs {
+  option = () => {
+    return this;
+  };
+
+  argv = {
     _: [],
     "default-directory": "/Volumes/Storage/Downloads",
     defaultDirectory: "/Volumes/Storage/Downloads",
@@ -21,5 +34,10 @@ module.exports = {
     isMultiFile: 0,
     complete: 1,
     $0: "Path/to/rename-removed.js",
-  },
-};
+    output,
+  };
+}
+
+export const yargs = new Yargs();
+
+export default yargs;

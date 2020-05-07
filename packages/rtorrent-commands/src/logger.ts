@@ -1,10 +1,11 @@
 import winston from "winston";
 import { DateTime } from "luxon";
 import * as path from "path";
+import Arguments from "yargs";
 
 const homedir = require("os").homedir();
 
-const argv = require("yargs").options("output", {
+const argv = Arguments.option("output", {
   description: "file to log into",
   default: path.join(
     homedir,

@@ -2,15 +2,16 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import Arguments from "yargs";
+
 export const DIRECTORY_MATCH = /How to/i;
 export const NFO_NAME = "original.json";
 
-const yargs = require("yargs")
-  .option("directory", {
-    required: true,
-    type: "string",
-    description: "folder containing torrent",
-  })
+export const yargs = Arguments.option("directory", {
+  required: true,
+  type: "string",
+  description: "folder containing torrent",
+})
   .option("base-path", {
     required: true,
     type: "string",

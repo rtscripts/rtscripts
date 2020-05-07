@@ -8,6 +8,7 @@ import * as RenameRemoved from "../src/commands/rename-on-remove";
 import logger from "../src/logger";
 
 jest.mock("yargs");
+console.log = jest.fn();
 
 describe("rename-on-remove", () => {
   let tempFolder: string;
@@ -23,7 +24,11 @@ describe("rename-on-remove", () => {
   const folderList = async (label?: string, folder?: string) =>
     console.log(
       `[TEST] torrent folder ${label ? "(" + label + ")" : ""}`,
-      (await shell.exec(`ls -lh '${folder || torrentFolder}'`))
+      (
+        await shell.exec(`ls -lh '${folder || torrentFolder}'`, {
+          silent: true,
+        })
+      )
         .toString()
         .split("\n")
         .filter(
