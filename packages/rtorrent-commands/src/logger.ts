@@ -1,9 +1,19 @@
 import winston from "winston";
 import { DateTime } from "luxon";
 import * as path from "path";
-import * as fs from "fs";
 
-const filename = path.resolve(__dirname, "rename-removed.log");
+const homedir = require("os").homedir();
+
+const argv = require("yargs").options("output", {
+  description: "file to log into",
+  default: path.join(
+    homedir,
+    "Library/Logs",
+    "rtorrent.command.rename-on-removed.log"
+  ),
+}).argv;
+
+const filename = argv.output;
 
 export const logger = winston.createLogger({
   level: "debug",

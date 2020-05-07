@@ -1,41 +1,62 @@
 #!/usr/bin/env node
-import logger from "../logger";
 import * as fs from "fs";
 import * as path from "path";
-import * as shell from "shelljs";
 
 export const DIRECTORY_MATCH = /How to/i;
 export const NFO_NAME = "original.json";
 
+const yargs = require("yargs")
+  .option("directory", {
+    required: true,
+    type: "string",
+    description: "folder containing torrent",
+  })
+  .option("basePath", {
+    required: true,
+    type: "string",
+    description: "path to torrent files",
+  })
+  .option("complete", {
+    type: "number",
+    description: "has torrent completed",
+  });
+
+import logger from "../logger";
+
 export interface TorrentArgs {
-  sessionPath: string;
-  hash: string;
-  hashing: number;
-  name: string;
+  // required
   directory: string;
   basePath: string;
-  tiedToFile: number;
-  isMultiFile: number;
   complete: number;
+  // optional
+  name?: string;
+  hash?: string;
+  tiedToFile?: number;
+  isMultiFile?: number;
+  // unused
+  // sessionPath: string;
+  // hashing: number;
 }
 
 export const getTorrentFromArgs = (args: any): TorrentArgs => {
   const torrent = {
-    sessionPath: args.sessionPath,
-    hash: args.hash,
-    hashing: args.hashing,
     name: args.name,
     directory: args.directory,
     basePath: args.basePath,
+    complete: args.complete,
+    hash: args.hash,
+    // sessionPath: args.sessionPath,
+    // hashing: args.hashing,
     tiedToFile: args.tiedToFile,
     isMultiFile: args.isMultiFile,
-    complete: args.complete,
   };
   return torrent;
 };
 
 export const isTorrentRenamable = (torrent: TorrentArgs): boolean => {
-  return DIRECTORY_MATCH.test(torrent.basePath) && torrent.complete >= 1;
+  const complete =
+    typeof torrent.complete !== "undefined" ? torrent.complete >= 1 : true;
+  return DIRECTORY_MATCH.test(torrent.basePath) && complete;
 };
 
 export const MovieTypes = [".mp4", ".wmv", ".avi"];
@@ -90,7 +111,7 @@ export const renameTorrent = async (torrent: TorrentArgs) => {
 };
 
 export const main = () => {
-  const argv = require("yargs").argv;
+  const argv = yargs.argv;
   logger.debug("raw-arguments", argv);
   const torrent = getTorrentFromArgs(argv);
 
