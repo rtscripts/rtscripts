@@ -1,6 +1,6 @@
 {
   "name": "@rtscripts/rtorrent-commands",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "rtorrent method for event.download.erased",
   "homepage": "",
   "license": "ISC",
