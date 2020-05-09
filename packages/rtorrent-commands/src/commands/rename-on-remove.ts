@@ -28,10 +28,10 @@ import logger from "../logger";
 export interface TorrentArgs {
   // required
   directory: string;
-  basePath: string;
+  // basePath: string;
   complete: number;
   // optional
-  name?: string;
+  name: string;
   hash?: string;
   tiedToFile?: number;
   isMultiFile?: number;
@@ -44,7 +44,7 @@ export const getTorrentFromArgs = (args: any): TorrentArgs => {
   const torrent = {
     name: args.name,
     directory: args.directory,
-    basePath: args.basePath,
+    // basePath: args.basePath,
     complete: args.complete,
     hash: args.hash,
     // sessionPath: args.sessionPath,
@@ -56,7 +56,7 @@ export const getTorrentFromArgs = (args: any): TorrentArgs => {
 };
 
 export const isTorrentRenamable = (torrent: TorrentArgs): boolean => {
-  return DIRECTORY_MATCH.test(torrent.basePath) && torrent.complete >= 1;
+  return DIRECTORY_MATCH.test(torrent.directory) && torrent.complete >= 1;
 };
 
 export const MovieTypes = [".mp4", ".wmv", ".avi"];

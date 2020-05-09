@@ -19,22 +19,28 @@ describe("rename-on-remove", () => {
   console.log = jest.fn();
   logger.level = "critical";
 
-  function createTempTorrent(
-    folderName?: string,
-    fileName?: string,
-    matchFolder?: string,
-    skip_yargs: boolean | null = false
-  ) {
-    folderName = folderName || SAMPLE_FOLDER;
-    fileName = fileName || SAMPLE_FILE;
-    matchFolder = matchFolder || MATCH_FOLDER;
+  /*
+  {
+    "name": "[TeensLikeItBig] MJ Fresh - Its Just Wrestling - 04-21-2020",
+    "directory": "/Volumes/1TBStorage/How to/Tits/MJ Fresh/ MJFresh & Duncan Saint - It's Just Wrestling (2020-04-21) [Brazzers - Teens Like It Big]/[TeensLikeItBig] MJ Fresh - Its Just Wrestling - 04-21-2020",
+    "complete": 1,
+    "hash": "F828EAF461D14F5535E9451F5B4BEA1C1493F2D9",
+    "tiedToFile": "",
+    "isMultiFile": 1
+  }
+  */
 
+  function createTempTorrent(torrent?: RenameRemoved.TorrentArgs, match: boolean = true) {
     temp.track();
+    torrent = torrent || { name: SAMPLE_FILE, directory: SAMPLE_FOLDER, complete: 1 };
     const tempFolder = temp.mkdirSync({ prefix: "rename-on-remove" });
     tempFolders.push(tempFolder);
+    const directory = path.join(match ? MATCH_FOLDER : "", torrent.directory);
+    const fileName = path.basename(torrent.name);
 
-    const torrentFolder = path.resolve(tempFolder, matchFolder, folderName);
+    const torrentFolder = path.resolve(tempFolder, directory);
     fs.ensureDirSync(torrentFolder);
+
     const torrentFile = path.resolve(torrentFolder, fileName);
     fs.writeFileSync(torrentFile, "null");
 
@@ -51,24 +57,18 @@ describe("rename-on-remove", () => {
       files[0] = "total " + (files.length - 1);
       return files;
     };
-    if (!skip_yargs) {
-      yargs.argv.name = fileName;
-      yargs.argv.basePath = torrentFile;
-      yargs.argv.directory = torrentFolder;
-      yargs.argv.complete = 1;
-    }
+    yargs.argv.name = torrent.name;
+    yargs.argv.directory = torrentFolder;
+    yargs.argv.complete = 1;
 
-    const renamedFile = path.join(torrentFolder, folderName + path.extname(fileName));
     const ignoreNfoFile = path.join(torrentFolder, yargs.argv.hash + ".rename-ignored.nfo");
     return {
       torrentFolder,
       fileName,
-      ext: path.extname(fileName),
+      extname: path.extname(fileName),
       torrentFile,
       nfoFile,
       fileList,
-      renamedFile,
-      matchFolder,
       ignoreNfoFile,
     };
   }
@@ -84,38 +84,43 @@ describe("rename-on-remove", () => {
     });
 
     it("should rename torrent in-place", async () => {
-      const temp = createTempTorrent();
+      const temp = createTempTorrent({ name: SAMPLE_FILE, directory: SAMPLE_FOLDER, complete: 1 });
       await RenameRemoved.main();
       expect(fs.existsSync(temp.torrentFile)).toBeFalsy();
-      expect(fs.existsSync(temp.renamedFile)).toBeTruthy();
+      expect(fs.existsSync(path.join(temp.torrentFolder, SAMPLE_FOLDER + temp.extname))).toBeTruthy();
     });
 
     it("should make valid original.mp4.rename.nfo", async () => {
-      const temp = createTempTorrent();
+      const temp = createTempTorrent({ name: SAMPLE_FILE, directory: SAMPLE_FOLDER, complete: 1 });
       await RenameRemoved.main();
       expect(fs.existsSync(temp.nfoFile)).toBeTruthy();
 
       const filename = path.basename(temp.torrentFile);
       const nfo = JSON.parse(fs.readFileSync(temp.nfoFile).toString());
       expect(nfo).toBeTruthy();
-      expect(nfo.torrent).toHaveProperty("basePath", temp.torrentFile);
       expect(nfo.torrent).toHaveProperty("name", filename);
       expect(nfo.action).toHaveProperty("from_file", temp.torrentFile);
       expect(nfo.action).toHaveProperty("to_file");
     });
 
     it("can accept quotes", async () => {
-      const temp = createTempTorrent("Can't - Not Rename Me (2020) [Studio Name]", "Can't.Not.Rename.Me.mp4");
+      const sample = {
+        directory: "Can't - Not Rename Me (2020) [Studio Name]",
+        name: "Can't.Not.Rename.Me.mp4",
+        complete: 1,
+      };
+      const temp = createTempTorrent(sample);
       await RenameRemoved.main();
       expect(fs.existsSync(temp.torrentFile)).toBeFalsy();
-      expect(fs.existsSync(temp.renamedFile)).toBeTruthy();
+      expect(fs.existsSync(path.join(temp.torrentFolder, sample.directory + temp.extname))).toBeTruthy();
     });
 
     it.skip("can handle simple folder wrapped torrents", async () => {
-      const temp = createTempTorrent(
-        "Can't - Not Rename Me (2020) [Studio Name]/Studio Folder",
-        "Can't.Not.Rename.Me.mp4"
-      );
+      const temp = createTempTorrent({
+        directory: "Can't - Not Rename Me (2020) [Studio Name]/Studio Folder",
+        name: "Can't.Not.Rename.Me.mp4",
+        complete: 1,
+      });
       await RenameRemoved.main();
       // expect(fs.existsSync(temp.torrentFile)).toBeFalsy();
       // expect(fs.existsSync(temp.renamedFile)).toBeTruthy();
@@ -135,7 +140,10 @@ describe("rename-on-remove", () => {
     });
     it("should ignore un-renamable torrent", async () => {
       yargs.argv.complete = 0;
-      const temp = createTempTorrent("Amother File", "amother.file-sample.mp4", "Now To");
+      const temp = createTempTorrent(
+        { directory: "Now To/Amother File", name: "amother.file-sample.mp4", complete: 1 },
+        false
+      );
       const isTorrentRenamableSpy = jest.spyOn(RenameRemoved, "isTorrentRenamable");
       await RenameRemoved.main();
       expect(isTorrentRenamableSpy).toBeCalled();
@@ -144,7 +152,6 @@ describe("rename-on-remove", () => {
       expect(fs.existsSync(temp.ignoreNfoFile)).toBe(true);
       const ignoreNfoFile = JSON.parse(fs.readFileSync(temp.ignoreNfoFile).toString());
       expect(ignoreNfoFile).toBeTruthy();
-      expect(ignoreNfoFile.torrent).toHaveProperty("basePath", temp.torrentFile);
       expect(ignoreNfoFile.torrent).toHaveProperty("name", temp.fileName);
 
       // console.log("[TEST]", "files", (await sampleMovie.fileList()).join("\n"));
@@ -152,8 +159,16 @@ describe("rename-on-remove", () => {
     });
 
     it("should ignore torrent trailers and previews", async () => {
-      const sampleMovie = createTempTorrent("Amother File", "amother.file-sample.mp4");
-      const previewMovie = createTempTorrent("Some Rich Title (2009)", "some.rich.title.preview.of.movie.mp4");
+      const sampleMovie = createTempTorrent({
+        directory: "Amother File",
+        name: "amother.file-sample.mp4",
+        complete: 1,
+      });
+      const previewMovie = createTempTorrent({
+        directory: "Some Rich Title (2009)",
+        name: "some.rich.title.preview.of.movie.mp4",
+        complete: 1,
+      });
       await RenameRemoved.main();
       // original torrent file name should still exist..
       expect(fs.existsSync(sampleMovie.torrentFile)).toBeTruthy();
