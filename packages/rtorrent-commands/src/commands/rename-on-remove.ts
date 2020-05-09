@@ -124,6 +124,10 @@ export const main = () => {
     }
   } else {
     logger.silly("ignored", argv.name);
+    // write nfo log
+    const nfoContent = JSON.stringify({ torrent }, null, 2);
+    const nfoFile = path.resolve(torrent.directory, torrent.hash + ".rename-ignored.nfo");
+    fs.writeFileSync(nfoFile, nfoContent);
   }
 };
 

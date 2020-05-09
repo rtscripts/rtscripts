@@ -16,7 +16,7 @@ describe("rename-on-remove", () => {
   let tempFolders: string[] = [];
 
   jest.mock("yargs");
-  // console.log = jest.fn();
+  console.log = jest.fn();
   logger.level = "critical";
 
   function createTempTorrent(
@@ -110,6 +110,10 @@ describe("rename-on-remove", () => {
       expect(fs.existsSync(temp.torrentFile)).toBeFalsy();
       expect(fs.existsSync(temp.renamedFile)).toBeTruthy();
       console.log("[TEST]", "files", (await temp.fileList()).join("\n"));
+    });
+
+    it.skip("can handle simple folder wrapped torrents", () => {
+      //
     });
   });
 
