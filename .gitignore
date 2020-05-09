@@ -3,3 +3,6 @@
 node_modules
 .env
 .rtorrent.rc
+packages/examples
+packages/macos-rtorrent-client
+packages/rtorrent-config
