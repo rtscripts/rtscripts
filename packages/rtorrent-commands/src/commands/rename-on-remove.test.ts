@@ -40,8 +40,7 @@ describe("rename-on-remove", () => {
 
     const nfoFile = path.resolve(torrentFolder, fileName + ".rename.nfo");
 
-    const fileList = async (label?: string) => {
-      console.log("torrentFolder", torrentFolder);
+    const fileList = async () => {
       const bash = shellescape(["ls", "-lh", torrentFolder]);
       const files = (await shell.exec(bash, { silent: true }))
         .toString()
@@ -60,7 +59,7 @@ describe("rename-on-remove", () => {
     }
 
     const renamedFile = path.join(torrentFolder, folderName + path.extname(fileName));
-
+    const ignoreNfoFile = path.join(torrentFolder, yargs.argv.hash + ".rename-ignored.nfo");
     return {
       torrentFolder,
       fileName,
@@ -70,6 +69,7 @@ describe("rename-on-remove", () => {
       fileList,
       renamedFile,
       matchFolder,
+      ignoreNfoFile,
     };
   }
 
@@ -109,11 +109,17 @@ describe("rename-on-remove", () => {
       await RenameRemoved.main();
       expect(fs.existsSync(temp.torrentFile)).toBeFalsy();
       expect(fs.existsSync(temp.renamedFile)).toBeTruthy();
-      console.log("[TEST]", "files", (await temp.fileList()).join("\n"));
     });
 
-    it.skip("can handle simple folder wrapped torrents", () => {
-      //
+    it.skip("can handle simple folder wrapped torrents", async () => {
+      const temp = createTempTorrent(
+        "Can't - Not Rename Me (2020) [Studio Name]/Studio Folder",
+        "Can't.Not.Rename.Me.mp4"
+      );
+      await RenameRemoved.main();
+      // expect(fs.existsSync(temp.torrentFile)).toBeFalsy();
+      // expect(fs.existsSync(temp.renamedFile)).toBeTruthy();
+      console.log("[TEST]", temp.torrentFolder, (await temp.fileList()).join("\n"));
     });
   });
 
@@ -129,11 +135,20 @@ describe("rename-on-remove", () => {
     });
     it("should ignore un-renamable torrent", async () => {
       yargs.argv.complete = 0;
+      const temp = createTempTorrent("Amother File", "amother.file-sample.mp4", "Now To");
       const isTorrentRenamableSpy = jest.spyOn(RenameRemoved, "isTorrentRenamable");
       await RenameRemoved.main();
       expect(isTorrentRenamableSpy).toBeCalled();
       expect(isTorrentRenamableSpy).toHaveReturnedWith(false);
       isTorrentRenamableSpy.mockRestore();
+      expect(fs.existsSync(temp.ignoreNfoFile)).toBe(true);
+      const ignoreNfoFile = JSON.parse(fs.readFileSync(temp.ignoreNfoFile).toString());
+      expect(ignoreNfoFile).toBeTruthy();
+      expect(ignoreNfoFile.torrent).toHaveProperty("basePath", temp.torrentFile);
+      expect(ignoreNfoFile.torrent).toHaveProperty("name", temp.fileName);
+
+      // console.log("[TEST]", "files", (await sampleMovie.fileList()).join("\n"));
+      // console.log("[TEST]", "ignoreNfoFile", ignoreNfoFile);
     });
 
     it("should ignore torrent trailers and previews", async () => {
