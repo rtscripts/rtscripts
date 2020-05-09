@@ -1,5 +1,5 @@
 {
-  "exclude": ["node_modules"],
+  "exclude": [],
   "include": ["src/**/*.ts"],
   "compilerOptions": {
     "target": "es5",
@@ -7,7 +7,7 @@
     "outDir": "lib",
     "strict": true,
     "allowJs": true,
-    "types": ["jest", "node"],
+    // "types": ["jest", "node", "./node_modules/@types"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   }
