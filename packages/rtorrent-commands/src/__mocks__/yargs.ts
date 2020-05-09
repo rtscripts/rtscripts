@@ -1,16 +1,18 @@
-import * as path from "path";
-const homedir = require("os").homedir();
+import * as path from "path"
+const homedir = require("os").homedir()
 
-const output = path.join(
-  homedir,
-  "Library/Logs",
-  "rtorrent.command.rename-on-removed.log"
-);
+const output = path.join(homedir, "Library/Logs", "rtorrent.command.rename-on-removed.log")
 
+/*
+  {
+    "name": "Some Folder Name",
+    "directory": "/Path/How to/Torrent File Folder/Some Folder Name",
+  }
+  */
 class Yargs {
   option = () => {
-    return this;
-  };
+    return this
+  }
 
   argv = {
     _: [],
@@ -24,10 +26,8 @@ class Yargs {
     hashingFailed: 1,
     name: "example.2020.01.02.file.name.mp4",
     directory: "/Volumes/Storage/Some Example/Path",
-    "base-path":
-      "/Volumes/Storage/Some Example/Path/example.2020.01.02.file.name.mp4",
-    basePath:
-      "/Volumes/Storage/Some Example/Path/example.2020.01.02.file.name.mp4",
+    "base-path": "/Volumes/Storage/Some Example/Path/example.2020.01.02.file.name.mp4",
+    basePath: "/Volumes/Storage/Some Example/Path/example.2020.01.02.file.name.mp4",
     "tied-to-file": "",
     tiedToFile: "",
     "is-multi-file": 0,
@@ -35,9 +35,9 @@ class Yargs {
     complete: 1,
     $0: "Path/to/rename-removed.js",
     output,
-  };
+  }
 }
 
-export const yargs = new Yargs();
+export const yargs = new Yargs()
 
-export default yargs;
+export default yargs
