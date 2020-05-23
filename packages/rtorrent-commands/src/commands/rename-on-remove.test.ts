@@ -56,10 +56,10 @@ describe("rename-on-remove", () => {
       expect(nfo.action).toHaveProperty("to_file")
     })
 
-    it("can accept quotes", async () => {
+    it("can accept \"'&?!,", async () => {
       const sample = createTempTorrent({
-        directory: "One/Two/Can't - Not Rename Me (2020) [Studio Name]",
-        name: "Can't.Not.Rename.Me.mp4",
+        directory: 'One/Two/Can\'t - Not "Rename" Me!, Fight & Me? (2020) [Studio Name]',
+        name: 'Can\'t.Not & "Rename"? Me.mp4',
         complete: 1,
       })
       await RenameRemoved.main()
@@ -89,7 +89,7 @@ describe("rename-on-remove", () => {
   })
 
   describe("validations", () => {
-    it("should recognize when (torrent) --complete is 1", async () => {
+    it("(complete) recognizes torrent when --complete is 1", async () => {
       yargs.argv.complete = 1
       createTempTorrent()
       const isTorrentRenamableSpy = jest.spyOn(RenameRemoved, "isTorrentRenamable")
@@ -97,7 +97,7 @@ describe("rename-on-remove", () => {
       expect(isTorrentRenamableSpy).toHaveReturnedWith(true)
       isTorrentRenamableSpy.mockRestore()
     })
-    it("should ignore when (torrent) --complete is 0", async () => {
+    it("(complete) ignores torrent when --complete is 0", async () => {
       const sample = createTempTorrent()
       yargs.argv.complete = 0
       // yargs.argv.depth = 0
@@ -110,7 +110,7 @@ describe("rename-on-remove", () => {
       expect(ignoreNfoFile).toBeTruthy()
       expect(ignoreNfoFile.torrent).toHaveProperty("name", sample.fileName)
     })
-    it("should recognize when (dir) --match", async () => {
+    it("(dir-match) recognizes torrent when --dir-match", async () => {
       yargs.argv.complete = 1
       createTempTorrent()
       const isTorrentRenamableSpy = jest.spyOn(RenameRemoved, "isTorrentRenamable")
@@ -118,7 +118,7 @@ describe("rename-on-remove", () => {
       expect(isTorrentRenamableSpy).toHaveReturnedWith(true)
       isTorrentRenamableSpy.mockRestore()
     })
-    it("should ignore when (dir) --match is 'nowhere'", async () => {
+    it("(dir-match) ignores torrent when --match is 'nowhere'", async () => {
       yargs.argv.complete = 1
       createTempTorrent()
       const isTorrentRenamableSpy = jest.spyOn(RenameRemoved, "isTorrentRenamable")
@@ -126,7 +126,7 @@ describe("rename-on-remove", () => {
       expect(isTorrentRenamableSpy).toHaveReturnedWith(true)
       isTorrentRenamableSpy.mockRestore()
     })
-    it("should recognize when (subdir) --depth equals 5", async () => {
+    it("(subdir) recognizes torrent when --depth equals 5", async () => {
       yargs.argv.complete = 1
       yargs.argv.depth = 5
       createTempTorrent({
@@ -139,7 +139,7 @@ describe("rename-on-remove", () => {
       expect(isTorrentRenamableSpy).toHaveReturnedWith(true)
       isTorrentRenamableSpy.mockRestore()
     })
-    it("should ignore when (subdir) --depth is incorrect", async () => {
+    it("(subdir) ignores torrent when --depth is incorrect", async () => {
       yargs.argv.complete = 1
       yargs.argv.depth = 3
       const temp = createTempTorrent({
@@ -156,7 +156,7 @@ describe("rename-on-remove", () => {
       expect(ignoreNfoFile).toBeTruthy()
       expect(ignoreNfoFile.torrent).toHaveProperty("name", temp.fileName)
     })
-    it("should ignore when (subdir) --depth is 0", async () => {
+    it("(subdir) ignores torrent when --depth is 0", async () => {
       yargs.argv.complete = 1
       yargs.argv.depth = 0
       createTempTorrent({
@@ -170,7 +170,7 @@ describe("rename-on-remove", () => {
       isTorrentRenamableSpy.mockRestore()
     })
 
-    it("should ignore torrent trailers and previews", async () => {
+    it("(file) ignores torrent when file contains preview, example, sample", async () => {
       const sampleMovie = createTempTorrent({
         directory: "Videos/Studio (YYYY)",
         name: "Studio.YYYY.file-sample.mp4",

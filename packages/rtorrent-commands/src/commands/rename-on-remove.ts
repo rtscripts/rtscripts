@@ -67,7 +67,6 @@ import { CommandResponse } from "../command-response"
 export interface TorrentArgs {
   // required
   directory: string
-  // basePath: string;
   complete: number
   // optional
   name: string
@@ -75,6 +74,7 @@ export interface TorrentArgs {
   tiedToFile?: number
   isMultiFile?: number
   // unused
+  // basePath: string;
   // sessionPath: string;
   // hashing: number;
 }
@@ -90,11 +90,8 @@ export const getTorrentFromArgs = (args: any): TorrentArgs => {
   const torrent = {
     name: args.name,
     directory: args.directory,
-    // basePath: args.basePath,
     complete: args.complete,
     hash: args.hash,
-    // sessionPath: args.sessionPath,
-    // hashing: args.hashing,
     tiedToFile: args.tiedToFile,
     isMultiFile: args.isMultiFile,
   }
@@ -120,18 +117,8 @@ export const getTorrentSubdirs = (torrent: TorrentArgs, options: CommandArgs) =>
   const subdirs = dirs.slice(matchIndex + 1)
   const subdirIndex = matchIndex + 1 + options.depth
   const destFolder = dirs.slice(0, subdirIndex).join("/")
-  // const subdirName = path.basename(destFolder)
-  // const torrentFolder = subdirs[options.depth - 1]
-  // const subdirIndex = subdirs[options.depth]
-  // logger.silly("dirs:" + JSON.stringify(dirs))
-  // logger.debug("subdirs:" + subdirs)
-  // logger.debug("matchIndex:" + matchIndex)
-  // logger.debug("torrentFolder:" + torrentFolder)
-  // logger.debug("destFolder:" + destFolder)
   return {
     subdirs,
-    // subdirName,
-    matchIndex,
     destFolder,
   }
 }
