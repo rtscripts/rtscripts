@@ -1,6 +1,7 @@
 import * as path from "path"
 const homedir = require("os").homedir()
-
+// const MIN_SUBDIRS = 0
+// const DIRECTORY_MATCH = "How to"
 const output = path.join(homedir, "Library/Logs", "rtorrent.command.rename-on-removed.log")
 
 /*
@@ -34,6 +35,10 @@ class Yargs {
     isMultiFile: 0,
     complete: 1,
     $0: "Path/to/rename-removed.js",
+    // "opt-min-subdirs": MIN_SUBDIRS,
+    // optMinSubdirs: MIN_SUBDIRS,
+    // optDirMatch: DIRECTORY_MATCH,
+    // "opt-dir-match": DIRECTORY_MATCH,
     output,
   }
 }

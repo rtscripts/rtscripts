@@ -6,7 +6,8 @@
   "license": "ISC",
   "main": "lib/index.js",
   "bin": {
-    "rtorrent-rename-on-remove": "lib/commands/rename-on-remove.js"
+    "rtorrent-rename-on-remove": "lib/commands/rename-on-remove.js",
+    "rtscripts": "lib/commands/handler.js"
   },
   "directories": {
     "lib": "lib",
@@ -25,6 +26,7 @@
   },
   "dependencies": {
     "@types/temp": "^0.8.34",
+    "chrono-node": "^1.4.6",
     "luxon": "^1.24.1",
     "shell-escape": "^0.2.0",
     "winston": "^3.2.1",
