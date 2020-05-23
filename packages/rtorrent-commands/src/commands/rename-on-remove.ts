@@ -18,20 +18,15 @@ export const NFO_NAME = "original.json"
 export const SUBDIR_DEPTH = 3
 
 /**
- * If depth > 0, control whether to "unwrap" or use depth folder to rename and destination file
+ * Force the --depth to be exact
  */
-export const UNWRAP_DEFAULT = false
+export const EXACT_DEPTH_DEFAULT = false
 
 export const yargs = Arguments.option("directory", {
   required: true,
   type: "string",
   description: "folder containing torrent",
 })
-  .option("base-path", {
-    required: true,
-    type: "string",
-    description: "path to torrent files",
-  })
   .option("complete", {
     type: "number",
     description: "has torrent completed",
@@ -49,10 +44,10 @@ export const yargs = Arguments.option("directory", {
     default: SUBDIR_DEPTH,
     description: "Minimum amount of sub-dirs under --dir-match",
   })
-  .option("unwrap", {
+  .option("exact-depth", {
     type: "boolean",
-    default: UNWRAP_DEFAULT,
-    description: "if --depth is set, this will use sub-dir at depth for renaming and destination",
+    default: EXACT_DEPTH_DEFAULT,
+    description: "(un-wrap mode) if --depth is set, this will use sub-dir at exact depth for renaming and destination",
   })
   .option("nfo-name", {
     type: "string",
@@ -81,7 +76,7 @@ export interface TorrentArgs {
 
 export interface CommandArgs {
   depth: number
-  unwrap: boolean
+  exactDepth: boolean
   dirMatch: string
   nfoName: string
 }
@@ -102,7 +97,7 @@ export function getOptionsFromArgs(args: any): CommandArgs {
   logger.silly("getOptionsFromArgs", args)
   return {
     depth: typeof args.depth !== "undefined" ? parseInt(args.depth) : SUBDIR_DEPTH,
-    unwrap: typeof args.unwrap !== "undefined" ? args.unwrap : UNWRAP_DEFAULT,
+    exactDepth: typeof args.exactDepth !== "undefined" ? args.exactDepth : EXACT_DEPTH_DEFAULT,
     nfoName: typeof args.nfoName !== "undefined" ? (args.nfoName as string) : NFO_NAME,
     dirMatch: typeof args.dirMatch !== "undefined" ? (args.dirMatch as string) : DIRECTORY_MATCH,
   }
@@ -134,16 +129,16 @@ export const isTorrentRenamable = (torrent: TorrentArgs, options: CommandArgs): 
   let depthPasses = true
 
   if (options.depth > 0) {
-    depthPasses = subdirs.length === options.depth
-    logger.silly("options.unwrap " + options.unwrap)
-    if (options.unwrap === true) {
-      depthPasses = subdirs.length >= options.depth
+    depthPasses = subdirs.length >= options.depth
+    if (options.exactDepth === true) {
+      logger.debug("exactDepth matching is turned on")
+      depthPasses = subdirs.length === options.depth
     }
   }
-
-  logger.silly("isTorrentRenamable directoryPasses " + " " + directoryPasses + " " + directoryMatchRegex)
-  logger.silly("isTorrentRenamable completePasses " + completePasses + " " + torrent.complete)
-  logger.silly("isTorrentRenamable depthPasses" + " " + depthPasses + " " + options.depth + " " + subdirs)
+  logger.silly("isTorrentRenamable", { completePasses, directoryPasses, depthPasses })
+  if (!completePasses && directoryPasses && depthPasses) {
+    logger.warn("isTorrentRenameable failed", { completePasses, directoryPasses, depthPasses })
+  }
   return completePasses && directoryPasses && depthPasses
 }
 
