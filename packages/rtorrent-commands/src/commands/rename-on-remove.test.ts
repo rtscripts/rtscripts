@@ -6,8 +6,7 @@ import * as fs from "fs-extra"
 // const shellescape = require("shell-escape")
 import { testTorrentFactory } from "./test-helpers"
 import * as RenameRemoved from "./rename-on-remove"
-import logger from "../logger"
-
+import { logger as makeLogger } from "../logger"
 const SAMPLE_FOLDER = "Subdir-One/Two/Faker - Folder Name (2020-01-01) [Studio - Category]"
 const SAMPLE_FILE = "fake-torrent-file-name.mp4"
 const MATCH_FOLDER = "Videos"
@@ -15,7 +14,7 @@ const SUBDIR_DEPTH = 3
 
 describe("rename-on-remove", () => {
   let tempFolders: string[] = []
-
+  const logger = makeLogger()
   jest.mock("yargs")
   // console.log = jest.fn()
   logger.level = "warn"

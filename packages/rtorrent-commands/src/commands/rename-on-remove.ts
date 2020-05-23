@@ -56,8 +56,10 @@ export const yargs = Arguments.option("directory", {
     default: NFO_NAME,
   })
 
-import logger from "../logger"
+import { logger as makeLogger } from "../logger"
 import { CommandResponse } from "../command-response"
+
+const logger = makeLogger()
 
 export interface TorrentArgs {
   // required
